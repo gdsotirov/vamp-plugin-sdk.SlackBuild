@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: vamp-plugin-sdk.SlackBuild,v 1.1 2016/09/25 07:44:23 gsotirov Exp $
+# $Id: vamp-plugin-sdk.SlackBuild,v 1.2 2016/09/25 08:34:50 gsotirov Exp $
 #
 
 . ../../slack-package.conf
@@ -62,8 +62,26 @@ CXXFLAGS="$SLKCFLAGS" \
             --libdir=/usr/lib${LIBDIRSUFFIX} \
             --enable-programs=yes || exit 4
 
+# Build & install
 make -j4 || exit 5
-make DESTDIR=$PKG install || exit 6
+make DESTDIR=$PKG \
+     INSTALL_SDK_LIBS=/usr/lib${LIBDIRSUFFIX} \
+     INSTALL_PLUGINS=/usr/lib${LIBDIRSUFFIX}/vamp \
+     INSTALL_PKGCONFIG=/usr/lib${LIBDIRSUFFIX}/pkgconfig \
+     install || exit 6
+
+# Add files to set VAMP_PATH properly
+mkdir -p $PKG/etc/profile.d/
+cat << EOF > $PKG/etc/profile.d/vamp.csh
+#!/bin/csh
+setenv VAMP_PATH /usr/lib${LIBDIRSUFFIX}/vamp
+EOF
+cat << EOF > $PKG/etc/profile.d/vamp.sh
+#!/bin/sh
+export VAMP_PATH=/usr/lib${LIBDIRSUFFIX}/vamp
+EOF
+chmod 755 $PKG/etc/profile.d/vamp.csh
+chmod 755 $PKG/etc/profile.d/vamp.sh
 
 bin_perms $PKG
 ( cd $PKG; strip_bin; strip_lib )
@@ -80,6 +98,7 @@ install -m 644 $CWD/slack-desc          $SBDIR/slack-desc
 install -m 644 $CWD/slack-required      $SBDIR/slack-required
 install -m 644 $CWD/$NAME.SlackBuild    $SBDIR/$NAME.SlackBuild
 
+# Pack
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
 cd $PKG
 makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
