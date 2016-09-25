@@ -17,13 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: vamp-plugin-sdk.SlackBuild,v 1.2 2016/09/25 08:34:50 gsotirov Exp $
+# $Id: vamp-plugin-sdk.SlackBuild,v 1.3 2016/09/25 08:55:10 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=vamp-plugin-sdk
-VERSION=2.4
+VERSION=2.5
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
@@ -34,13 +34,13 @@ if [ ! -e $TMP ]; then
   mkdir -p $TMP # location to build the source
 fi
 
-SRC=$TMP/$NAME-$VERSION
+SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
   exit 1
 fi
 
-PKG=$TMP/package-$NAME
+PKG=$TMP/package-${NAME}
 if [ -e $PKG -a -d $PKG ]; then
   echo "Package creation directory '$PKG' already exists! Please, move it or remove it."
   exit 2
@@ -49,15 +49,20 @@ mkdir -p $PKG
 
 # Extract the sources
 cd $TMP
-tar -xvf $CWD/$NAME-$VERSION.tar.?z* || exit 3
+tar -xvf $CWD/${NAME}-${VERSION}.tar.?z* || exit 3
 cd $SRC
 fix_source
+
+# Fix libdir in *.pc files
+if [ "$LIBDIRSUFFIX" != "" ]; then
+  sed -i "s/\/lib/\/lib${LIBDIRSUFFIX}/" pkgconfig/*.pc.in
+fi
 
 # Configure
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-./configure --build=$ARCH-slackware-linux \
-            --host=$ARCH-slackware-linux \
+./configure --build=${ARCH}-slackware-linux \
+            --host=${ARCH}-slackware-linux \
             --prefix=/usr \
             --libdir=/usr/lib${LIBDIRSUFFIX} \
             --enable-programs=yes || exit 4
@@ -85,26 +90,26 @@ chmod 755 $PKG/etc/profile.d/vamp.sh
 
 bin_perms $PKG
 ( cd $PKG; strip_bin; strip_lib )
-( cd $SRC; create_docs $PKG $NAME-$VERSION )
+( cd $SRC; create_docs $PKG ${NAME}-${VERSION} )
 
 # Copy service info
 install -m 755 -d $PKG/install
 install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
 install -m 644 $CWD/slack-required $PKG/install/slack-required
 
-SBDIR=$PKG/usr/src/slackbuilds/$NAME-$VERSION
+SBDIR=$PKG/usr/src/slackbuilds/${NAME}-${VERSION}
 install -m 755 -d $SBDIR
-install -m 644 $CWD/slack-desc          $SBDIR/slack-desc
-install -m 644 $CWD/slack-required      $SBDIR/slack-required
-install -m 644 $CWD/$NAME.SlackBuild    $SBDIR/$NAME.SlackBuild
+install -m 644 $CWD/slack-desc         $SBDIR/slack-desc
+install -m 644 $CWD/slack-required     $SBDIR/slack-required
+install -m 644 $CWD/${NAME}.SlackBuild $SBDIR/${NAME}.SlackBuild
 
 # Pack
-PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
+PKGNAME=${NAME}-${VERSION}-${ARCH}-${BUILD}${MYIN}
 cd $PKG
-makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
+makepkg -l y -c n $PKG_DIR/${PKGNAME}.txz
 cd $PKG_DIR
-md5sum $PKGNAME.txz > $PKGNAME.txz.md5
-cp $CWD/slack-desc $PKGNAME.txt
+md5sum ${PKGNAME}.txz > ${PKGNAME}.txz.md5
+cp $CWD/slack-desc ${PKGNAME}.txt
 
 # Clean up (optionally)
 if [ "$1" = "--cleanup" ]; then
