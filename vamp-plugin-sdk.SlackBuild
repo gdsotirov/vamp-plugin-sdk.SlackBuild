@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: vamp-plugin-sdk.SlackBuild,v 1.4 2016/09/25 09:05:36 gsotirov Exp $
+# $Id: vamp-plugin-sdk.SlackBuild,v 1.5 2016/09/25 09:24:53 gsotirov Exp $
 #
 
 . ../../slack-package.conf
@@ -87,6 +87,9 @@ export VAMP_PATH=/usr/lib${LIBDIRSUFFIX}/vamp
 EOF
 chmod 755 $PKG/etc/profile.d/vamp.csh
 chmod 755 $PKG/etc/profile.d/vamp.sh
+
+# Remove static libs
+( cd $PKG/usr/lib${LIBDIRSUFFIX}; rm -f *.a )
 
 bin_perms $PKG
 ( cd $PKG; strip_bin; strip_lib )
