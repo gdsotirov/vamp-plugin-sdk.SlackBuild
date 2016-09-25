@@ -1,0 +1,11 @@
+vamp-plugin-sdk: vamp-plugin-sdk (The Vamp audio analysis plugin system)
+vamp-plugin-sdk:
+vamp-plugin-sdk: Vamp is an audio processing plugin system for plugins that
+vamp-plugin-sdk: extract descriptive information from audio data - typically
+vamp-plugin-sdk: referred to as audio analysis plugins or audio feature
+vamp-plugin-sdk: extraction plugins.
+vamp-plugin-sdk:
+vamp-plugin-sdk:
+vamp-plugin-sdk:
+vamp-plugin-sdk:
+vamp-plugin-sdk: Packaged by Georgi D. Sotirov <gdsotirov@dir.bg>
