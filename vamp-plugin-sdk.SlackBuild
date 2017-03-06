@@ -17,13 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # 
-# $Id: vamp-plugin-sdk.SlackBuild,v 1.6 2017/02/26 10:10:23 gsotirov Exp $
+# $Id: vamp-plugin-sdk.SlackBuild,v 1.7 2017/03/06 16:44:49 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=vamp-plugin-sdk
-VERSION=2.7
+VERSION=2.7.1
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 
